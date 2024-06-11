@@ -42,15 +42,20 @@ final class SearchDeckModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
-    //swiftlint: disable trailing_closure
-    //swiftlint: disable discouraged_optional_collection
-    private var searchPublisher: some Publisher<[ExternalDeck]?, Never> {
+
+    private var combineTextAndFilterPublisher: AnyPublisher<(String, FilterType), Never> {
         Publishers.CombineLatest($searchText, $selectedFilter)
             .filter { !$0.0.isEmpty }
             .removeDuplicates { previous, actual in
                 previous.0 == actual.0 && previous.1 == actual.1
             }
+            .eraseToAnyPublisher()
+    }
+
+    //swiftlint: disable trailing_closure
+    //swiftlint: disable discouraged_optional_collection
+    private var searchPublisher: AnyPublisher<[ExternalDeck]?, Never> {
+        combineTextAndFilterPublisher
             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] _ in
@@ -73,6 +78,7 @@ final class SearchDeckModel: ObservableObject {
                     .eraseToAnyPublisher()
             }
             .replaceError(with: nil)
+            .eraseToAnyPublisher()
     }
     
     func loadMoreDecks() {

@@ -119,7 +119,7 @@ struct DeckTableView: View {
     @ViewBuilder
     private var table: some View {
         Table(selection: $viewModel.selection, sortOrder: $viewModel.sortOrder) {
-            TableColumn("") { deck in
+            TableColumn("") { (deck: Deck) in
                 Image(systemName: deck.icon)
                     .font(.system(size: 14))
                     .foregroundColor(HBColor.color(for: deck.color))
