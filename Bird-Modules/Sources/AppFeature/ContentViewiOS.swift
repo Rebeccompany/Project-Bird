@@ -37,32 +37,7 @@ public struct ContentViewiOS: View {
     
     public var body: some View {
         Group {
-            if horizontalSizeClass == .compact {
-                TabView(selection: $appRouter.selectedTab) {
-                    mainView
-                        .tabItem {
-                            Label {
-                                Text("baralhos", bundle: .module)
-                            } icon: {
-                                Image(systemName: "rectangle.portrait.on.rectangle.portrait.angled")
-                            }
-                        }
-                        .tag(AppRouter.Tab.study)
-                    
-                    storeDetail
-                    .tabItem {
-                        Label {
-                            Text("library", bundle: .module)
-                        } icon: {
-                            Image(systemName: "books.vertical")
-                        }
-                    }
-                    .tag(AppRouter.Tab.store)
-                }
-                
-            } else {
-                mainView
-            }
+            mainView
         }
         .navigationSplitViewStyle(.balanced)
         .sheet(isPresented: $onboarding) {
@@ -110,16 +85,7 @@ public struct ContentViewiOS: View {
     
     @ViewBuilder
     private var detail: some View {
-        if horizontalSizeClass == .compact {
-            studyDetail
-        } else {
-            switch appRouter.sidebarSelection {
-            case .store:
-                storeDetail
-            default:
-                studyDetail
-            }
-        }
+        studyDetail
     }
     
     @ViewBuilder
